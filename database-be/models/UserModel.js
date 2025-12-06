@@ -19,12 +19,12 @@ const userSchema = new mongoose.Schema (
         },
         role: {
             type: String,
-            enum: ['admin', 'lecturer'],
+            enum: ['ADMIN', 'LECTURER'],
             required: true,
         },
-        allowedRoom: [{
+        allowedRoom: {
             type: String,
-        }],
+        },
     }, { timestamps: true }
 )
 
@@ -41,5 +41,10 @@ userSchema.pre('save', async function (next) {
 })
 
 const User = mongoose.model("User", userSchema);
+
+// Drop old indexes to prevent conflicts (optional cleanup)
+User.collection.dropIndex("username_1").catch(() => {
+    // Index doesn't exist, no problem
+});
 
 module.exports = User;
